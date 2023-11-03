@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
   title: Library API
   version: 1.0.0
-  description: STD22001
+  description: STD22047
 servers:
   - url: https://library.com
 paths:
@@ -18,7 +18,12 @@ paths:
           required: false
           schema:
             type: string
-        #TODO3: add parameter to filter books by intervals of dates of the releaseDate
+        - in: query
+          name: releaseDate
+          description: Filter return books by intervals of date of the releaseDate.
+          required: true
+          schema: 
+            type: string 
       responses:
         200:
           description: The list of filtered books
@@ -48,7 +53,62 @@ paths:
                 items:
                   $ref: '#/components/schemas/Book'
   /authors:
-  #TODO2: complete GET (can be filtered by name) - PUT - DELETE
+    get:
+      summary: Get all authors
+      description: The returned author are ordered by name.
+      operationId: getAuthorByName
+      parameters:
+        - name: AuthorName
+          in: query
+          description: Filter author by name
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Author'
+    
+    put: 
+      summary: update author
+      description: update author by ID
+      operationId: updateAuthor
+      parameters:
+        - name: AuthorName
+          in: query
+          description: name that need to be update
+          required: true
+          schema: 
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/Author'
+    
+    delete:
+      summary: delete author
+      description: delete author by ID 
+      operationId: deleteAuthor
+      parameters:
+        - name: AuthorName
+          in: query
+          description: The name that needs to be delete
+          required: true
+          schema: 
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/Author'
 components:
   schemas:
     Book:
@@ -57,10 +117,10 @@ components:
         id:
           type: string
         bookName:
-          type: string
+          type: string 
         author:
-          #TODO1: set it as a component with properties : id, name, sex (M or F)
-          type: string
+          $ref:
+            '#/components/schemas/Author'
         pageNumbers:
           type: integer
         topic:
@@ -72,3 +132,15 @@ components:
         releaseDate:
           type: string
           format: date
+    Author:
+      type: object
+      properties:
+        id: 
+          type: string
+        name: 
+          type: string
+        sex: 
+          type: string
+          enum:
+            - M
+            - F
